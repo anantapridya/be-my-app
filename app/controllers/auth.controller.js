@@ -8,6 +8,11 @@ exports.signup = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
+    const existingUsername = await User.findOne({ username });
+    if (existingUsername) {
+      return res.status(400).json({ message: "Username already exists" });
+    }
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "user already exist" });
@@ -25,9 +30,8 @@ exports.signup = async (req, res) => {
 
     res.status(201).json({ message: "user successfully registered" });
   } catch (error) {
-    res.status(500).json({ message: "server error" });
+    res.status(500).json({ message: "server error", error });
   }
-  s;
 };
 
 exports.login = async (req, res) => {
@@ -55,7 +59,15 @@ exports.login = async (req, res) => {
     });
     await newSession.save();
 
-    res.status(200).json({ message: "login success", token });
+    res.status(200).json({
+      status: "success",
+      message: "login success",
+      data: {
+        username: user.username,
+        email: user.email,
+        token: token,
+      },
+    });
   } catch (error) {
     res.status(500).json({ message: "server error" });
   }
