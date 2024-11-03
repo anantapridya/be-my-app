@@ -26,24 +26,35 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userSessionRoutes);
 app.use("/api/message", messageRoutes);
 
-// Connect to MongoDB
+// Flag to track if the database is connected
+let isConnected = false;
+
 async function connectDB() {
-  try {
-    await db.mongoose.connect(db.url, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log("Connected to the database!");
-  } catch (err) {
-    console.error("Cannot connect to the database!", err);
-    throw err;
+  if (!isConnected) {
+    try {
+      await db.mongoose.connect(db.url, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
+      isConnected = true;
+      console.log("Connected to the database!");
+    } catch (err) {
+      console.error("Cannot connect to the database!", err);
+      throw err;
+    }
   }
 }
 
-// Export the app for Vercel
+// Export the handler for Vercel
 module.exports = async (req, res) => {
-  if (!db.mongoose.connection.readyState) {
-    await connectDB();
+  try {
+    if (!isConnected) {
+      await connectDB();
+    }
+    console.log("Processing request:", req.method, req.url);
+    app(req, res); // Pass the request to the Express app
+  } catch (err) {
+    console.error("Request failed:", err);
+    res.status(500).json({ message: "Server error" });
   }
-  app(req, res); // Delegate request to Express app
 };
