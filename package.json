@@ -16,8 +16,8 @@
     "cors": "^2.8.5",
     "express": "^4.21.1",
     "jsonwebtoken": "^9.0.2",
-    "mongodb": "^6.10.0",
-    "mongoose": "^8.8.0"
+    "mongodb": "^5.3.0",
+    "mongoose": "^6.10.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.7"
