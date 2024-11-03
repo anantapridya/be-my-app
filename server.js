@@ -51,9 +51,10 @@ module.exports = async (req, res) => {
   try {
     if (!isConnected) {
       await connectDB();
+      app(req, res);
     }
     console.log("Processing request:", req.method, req.url);
-    app(req, res); // Pass the request to the Express app
+    app(req, res);
   } catch (err) {
     console.error("Request failed:", err);
     res.status(500).json({ message: "Server error" });
