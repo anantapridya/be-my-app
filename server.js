@@ -32,9 +32,10 @@ let isConnected = false;
 async function connectDB() {
   if (!isConnected) {
     try {
-      await db.mongoose.connect(db.url, {
+      db.mongoose.connect(db.url, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
+        serverSelectionTimeoutMS: 5000, // Adjust if necessary
       });
       isConnected = true;
       console.log("Connected to the database!");
